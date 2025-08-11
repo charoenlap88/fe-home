@@ -4,6 +4,7 @@ import Login from './components/Login'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import Files from './pages/Files'
+import SystemMonitor from './pages/SystemMonitor'
 import './App.css'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/files" element={<Files />} />
+          <Route path="/system" element={<SystemMonitor />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Layout>

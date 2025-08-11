@@ -17,7 +17,8 @@ import {
   IconFileText,
   IconLogout,
   IconUser,
-  IconChevronDown
+  IconChevronDown,
+  IconChartBar
 } from '@tabler/icons-react';
 
 const Layout = ({ children, onLogout }) => {
@@ -26,7 +27,8 @@ const Layout = ({ children, onLogout }) => {
 
   const menuItems = [
     { path: '/dashboard', icon: IconDashboard, label: 'Dashboard' },
-    { path: '/files', icon: IconFileText, label: 'File' }
+    { path: '/files', icon: IconFileText, label: 'File' },
+    { path: '/system', icon: IconChartBar, label: 'System Monitor' }
   ];
 
   return (
