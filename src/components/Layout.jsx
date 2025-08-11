@@ -1,76 +1,128 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  User, 
-  LogOut,
+import {
+  AppShell,
+  Text,
+  UnstyledButton,
+  Group,
+  Avatar,
   Menu,
-  X
-} from 'lucide-react';
+  rem,
+  Burger,
+  ActionIcon
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import {
+  IconDashboard,
+  IconFileText,
+  IconLogout,
+  IconUser,
+  IconChevronDown
+} from '@tabler/icons-react';
 
 const Layout = ({ children, onLogout }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [opened, { toggle }] = useDisclosure();
   const location = useLocation();
 
   const menuItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/files', icon: FileText, label: 'File' }
+    { path: '/dashboard', icon: IconDashboard, label: 'Dashboard' },
+    { path: '/files', icon: IconFileText, label: 'File' }
   ];
 
   return (
-    <div className="layout">
-      {/* Top Bar */}
-      <header className="top-bar">
-        <div className="top-bar-left">
-          <button 
-            className="menu-toggle"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <h1>Dashboard</h1>
-        </div>
-        <div className="top-bar-right">
-          <div className="profile-menu">
-            <User size={20} />
-            <span>charoenlap</span>
-          </div>
-          <button className="logout-btn" onClick={onLogout}>
-            <LogOut size={20} />
-            <span>Logout</span>
-          </button>
-        </div>
-      </header>
-
-      <div className="main-container">
-        {/* Sidebar */}
-        <aside className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
-          <nav className="sidebar-nav">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 250,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Text size="lg" fw={600}>Dashboard</Text>
+          </Group>
+          
+          <Group>
+            <Group gap={7}>
+              <Avatar size={26} radius="xl" />
+              <Text size="sm" fw={500}>charoenlap</Text>
+            </Group>
+            
+            <Menu shadow="md" width={120}>
+              <Menu.Target>
+                <ActionIcon variant="subtle" size="lg">
+                  <IconChevronDown size="1rem" />
+                </ActionIcon>
+              </Menu.Target>
               
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`nav-item ${isActive ? 'active' : ''}`}
+              <Menu.Dropdown>
+                <Menu.Item 
+                  leftSection={<IconUser style={{ width: rem(14), height: rem(14) }} />}
                 >
-                  <Icon size={20} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
+                  Profile
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
+                  onClick={onLogout}
+                  color="red"
+                >
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+        </Group>
+      </AppShell.Header>
 
-        {/* Main Content */}
-        <main className="main-content">
-          {children}
-        </main>
-      </div>
-    </div>
+      <AppShell.Navbar p="md">
+        <AppShell.Section grow>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+            
+            return (
+              <UnstyledButton
+                key={item.path}
+                component={Link}
+                to={item.path}
+                p="sm"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  borderRadius: '4px',
+                  marginBottom: '4px',
+                  backgroundColor: isActive ? '#e7f5ff' : 'transparent',
+                  color: isActive ? '#1971c2' : '#495057',
+                  textDecoration: 'none'
+                }}
+                styles={(theme) => ({
+                  root: {
+                    '&:hover': {
+                      backgroundColor: '#f8f9fa',
+                    },
+                  },
+                })}
+              >
+                <Group>
+                  <Icon size="1.2rem" />
+                  <Text size="sm" fw={isActive ? 600 : 400}>
+                    {item.label}
+                  </Text>
+                </Group>
+              </UnstyledButton>
+            );
+          })}
+        </AppShell.Section>
+      </AppShell.Navbar>
+
+      <AppShell.Main>
+        {children}
+      </AppShell.Main>
+    </AppShell>
   );
 };
 

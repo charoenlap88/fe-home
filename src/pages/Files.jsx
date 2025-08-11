@@ -1,5 +1,26 @@
 import { useState } from 'react';
-import { FileText, Folder, Download, Upload, Search } from 'lucide-react';
+import {
+  Title,
+  Group,
+  Button,
+  TextInput,
+  Table,
+  ActionIcon,
+  Text,
+  Stack,
+  Paper,
+  Center,
+  ThemeIcon,
+  Badge
+} from '@mantine/core';
+import {
+  IconFileText,
+  IconFolder,
+  IconDownload,
+  IconUpload,
+  IconSearch,
+  IconFolderPlus
+} from '@tabler/icons-react';
 
 const Files = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,72 +38,112 @@ const Files = () => {
     file.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getFileIcon = (type) => {
+    return type === 'folder' ? (
+      <ThemeIcon variant="light" color="blue" size="sm">
+        <IconFolder size="1rem" />
+      </ThemeIcon>
+    ) : (
+      <ThemeIcon variant="light" color="gray" size="sm">
+        <IconFileText size="1rem" />
+      </ThemeIcon>
+    );
+  };
+
+  const rows = filteredFiles.map((file) => (
+    <Table.Tr key={file.id}>
+      <Table.Td>
+        <Group gap="sm">
+          {getFileIcon(file.type)}
+          <Text size="sm" fw={500}>
+            {file.name}
+          </Text>
+          {file.type === 'folder' && (
+            <Badge variant="light" size="xs" color="blue">
+              Folder
+            </Badge>
+          )}
+        </Group>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm" c="dimmed">
+          {file.size}
+        </Text>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm" c="dimmed">
+          {file.modified}
+        </Text>
+      </Table.Td>
+      <Table.Td>
+        <Group gap="xs">
+          <ActionIcon variant="subtle" color="blue" title="ดาวน์โหลด">
+            <IconDownload size="1rem" />
+          </ActionIcon>
+        </Group>
+      </Table.Td>
+    </Table.Tr>
+  ));
+
   return (
-    <div className="files-page">
-      <div className="files-header">
-        <h2>จัดการไฟล์</h2>
-        <div className="files-actions">
-          <button className="btn btn-primary">
-            <Upload size={16} />
+    <Stack gap="lg">
+      <Group justify="space-between">
+        <Title order={2}>จัดการไฟล์</Title>
+        <Group>
+          <Button leftSection={<IconUpload size="1rem" />} variant="filled">
             อัปโหลด
-          </button>
-          <button className="btn btn-secondary">
-            <Folder size={16} />
+          </Button>
+          <Button 
+            leftSection={<IconFolderPlus size="1rem" />} 
+            variant="light"
+          >
             โฟลเดอร์ใหม่
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Group>
+      </Group>
 
-      <div className="files-toolbar">
-        <div className="search-box">
-          <Search size={16} />
-          <input
-            type="text"
-            placeholder="ค้นหาไฟล์..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+      <Paper withBorder p="md" radius="md">
+        <TextInput
+          placeholder="ค้นหาไฟล์..."
+          leftSection={<IconSearch size="1rem" />}
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.currentTarget.value)}
+          style={{ maxWidth: 400 }}
+        />
+      </Paper>
 
-      <div className="files-list">
-        <div className="files-header-row">
-          <div className="file-name">ชื่อไฟล์</div>
-          <div className="file-size">ขนาด</div>
-          <div className="file-modified">แก้ไขล่าสุด</div>
-          <div className="file-actions">การดำเนินการ</div>
-        </div>
-
-        {filteredFiles.map((file) => (
-          <div key={file.id} className="file-row">
-            <div className="file-name">
-              <div className="file-icon">
-                {file.type === 'folder' ? (
-                  <Folder size={20} />
-                ) : (
-                  <FileText size={20} />
-                )}
+      <Paper withBorder radius="md" p={0}>
+        {filteredFiles.length > 0 ? (
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>ชื่อไฟล์</Table.Th>
+                <Table.Th>ขนาด</Table.Th>
+                <Table.Th>แก้ไขล่าสุด</Table.Th>
+                <Table.Th>การดำเนินการ</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        ) : (
+          <Center p="xl">
+            <Stack align="center" gap="md">
+              <ThemeIcon size={64} variant="light" color="gray">
+                <IconFileText size="2rem" />
+              </ThemeIcon>
+              <div>
+                <Text size="lg" fw={500} ta="center">
+                  ไม่พบไฟล์ที่ค้นหา
+                </Text>
+                <Text size="sm" c="dimmed" ta="center">
+                  ลองเปลี่ยนคำค้นหาหรือเพิ่มไฟล์ใหม่
+                </Text>
               </div>
-              <span>{file.name}</span>
-            </div>
-            <div className="file-size">{file.size}</div>
-            <div className="file-modified">{file.modified}</div>
-            <div className="file-actions">
-              <button className="btn-icon" title="ดาวน์โหลด">
-                <Download size={16} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredFiles.length === 0 && (
-        <div className="empty-state">
-          <FileText size={48} />
-          <p>ไม่พบไฟล์ที่ค้นหา</p>
-        </div>
-      )}
-    </div>
+            </Stack>
+          </Center>
+        )}
+      </Paper>
+    </Stack>
   );
 };
 

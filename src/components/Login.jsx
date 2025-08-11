@@ -1,13 +1,31 @@
 import { useState } from 'react';
+import { 
+  Container, 
+  Paper, 
+  TextInput, 
+  PasswordInput, 
+  Button, 
+  Title, 
+  Text, 
+  Alert,
+  Center,
+  Stack
+} from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { AUTH_CONFIG } from '../config';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    
+    // Simulate loading delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     if (username === AUTH_CONFIG.username && password === AUTH_CONFIG.password) {
       onLogin(true);
@@ -15,38 +33,67 @@ const Login = ({ onLogin }) => {
     } else {
       setError('Invalid username or password');
     }
+    setLoading(false);
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>เข้าสู่ระบบ</h2>
+    <Container 
+      size={420} 
+      my={40}
+      style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      }}
+    >
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md" style={{ width: '100%' }}>
+        <Center mb="md">
+          <Title order={2}>เข้าสู่ระบบ</Title>
+        </Center>
+        
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              type="text"
-              id="username"
+          <Stack gap="md">
+            <TextInput
+              label="Username"
+              placeholder="ใส่ username"
+              required
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
+              onChange={(event) => setUsername(event.currentTarget.value)}
             />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
+            
+            <PasswordInput
+              label="Password"
+              placeholder="ใส่ password"
+              required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              onChange={(event) => setPassword(event.currentTarget.value)}
             />
-          </div>
-          {error && <div className="error">{error}</div>}
-          <button type="submit">เข้าสู่ระบบ</button>
+            
+            {error && (
+              <Alert icon={<IconAlertCircle size="1rem" />} color="red">
+                {error}
+              </Alert>
+            )}
+            
+            <Button 
+              type="submit" 
+              fullWidth 
+              mt="xl"
+              loading={loading}
+              gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
+              variant="gradient"
+            >
+              เข้าสู่ระบบ
+            </Button>
+          </Stack>
         </form>
-      </div>
-    </div>
+        
+        <Text c="dimmed" size="sm" ta="center" mt={10}>
+          Username: charoenlap | Password: Ch@roenlap89
+        </Text>
+      </Paper>
+    </Container>
   );
 };
 
