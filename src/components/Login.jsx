@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { 
-  Container, 
   Paper, 
   TextInput, 
   PasswordInput, 
@@ -37,17 +36,18 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <Container 
-      size={420} 
-      my={40}
+    <div
       style={{ 
+        width: '100vw',
         minHeight: '100vh', 
         display: 'flex', 
         alignItems: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '20px'
       }}
     >
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md" style={{ width: '100%' }}>
+      <Paper withBorder shadow="md" p={30} radius="md" style={{ width: '100%', maxWidth: '420px' }}>
         <Center mb="md">
           <Title order={2}>เข้าสู่ระบบ</Title>
         </Center>
@@ -93,7 +93,7 @@ const Login = ({ onLogin }) => {
           Username: charoenlap | Password: Ch@roenlap89
         </Text>
       </Paper>
-    </Container>
+    </div>
   );
 };
 
