@@ -12,23 +12,27 @@ import {
   ActionIcon
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useAuth } from '../contexts/AuthContext';
 import {
   IconDashboard,
   IconFileText,
   IconLogout,
   IconUser,
   IconChevronDown,
-  IconChartBar
+  IconChartBar,
+  IconDatabase
 } from '@tabler/icons-react';
 
-const Layout = ({ children, onLogout }) => {
+const Layout = ({ children }) => {
+  const { user, logout } = useAuth();
   const [opened, { toggle }] = useDisclosure();
   const location = useLocation();
 
   const menuItems = [
     { path: '/dashboard', icon: IconDashboard, label: 'Dashboard' },
     { path: '/files', icon: IconFileText, label: 'File' },
-    { path: '/system', icon: IconChartBar, label: 'System Monitor' }
+    { path: '/system', icon: IconChartBar, label: 'System Monitor' },
+    { path: '/db-manager', icon: IconDatabase, label: 'Database' }
   ];
 
   return (
@@ -39,7 +43,7 @@ const Layout = ({ children, onLogout }) => {
         breakpoint: 'sm',
         collapsed: { mobile: !opened },
       }}
-      padding="md"
+      padding="lg"
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
@@ -51,7 +55,7 @@ const Layout = ({ children, onLogout }) => {
           <Group>
             <Group gap={7}>
               <Avatar size={26} radius="xl" />
-              <Text size="sm" fw={500}>charoenlap</Text>
+              <Text size="sm" fw={500}>{user?.username || 'User'}</Text>
             </Group>
             
             <Menu shadow="md" width={120}>
@@ -69,7 +73,7 @@ const Layout = ({ children, onLogout }) => {
                 </Menu.Item>
                 <Menu.Item
                   leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
-                  onClick={onLogout}
+                  onClick={logout}
                   color="red"
                 >
                   Logout
@@ -122,7 +126,9 @@ const Layout = ({ children, onLogout }) => {
       </AppShell.Navbar>
 
       <AppShell.Main>
-        {children}
+        <div style={{ paddingTop: '2rem' }}>
+          {children}
+        </div>
       </AppShell.Main>
     </AppShell>
   );

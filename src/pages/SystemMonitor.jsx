@@ -84,17 +84,9 @@ const SystemMonitor = () => {
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="lg">
       <Group justify="space-between">
         <Title order={2}>System Monitor</Title>
-        <Group>
-          <Text size="sm" c="dimmed">
-            Last updated: {lastUpdated?.toLocaleTimeString()}
-          </Text>
-          <ActionIcon variant="light" onClick={refreshData} loading={loading}>
-            <IconRefresh size="1rem" />
-          </ActionIcon>
-        </Group>
       </Group>
 
       {error && (
@@ -108,10 +100,10 @@ const SystemMonitor = () => {
         <>
           <Grid gutter="md">
             <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-              <Card withBorder p="md" radius="md" h={140}>
+              <Card withBorder p="lg" radius="md" h={160}>
                 <Group justify="space-between" h="100%">
                   <div style={{ flex: 1 }}>
-                    <Text c="dimmed" size="xs" fw={500} tt="uppercase">
+                    <Text c="dimmed" size="sm" fw={500} tt="uppercase">
                       CPU Usage
                     </Text>
                     <Text fw={700} size="xl">
@@ -131,10 +123,10 @@ const SystemMonitor = () => {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-              <Card withBorder p="md" radius="md" h={140}>
+              <Card withBorder p="lg" radius="md" h={160}>
                 <Group justify="space-between" h="100%">
                   <div style={{ flex: 1 }}>
-                    <Text c="dimmed" size="xs" fw={500} tt="uppercase">
+                    <Text c="dimmed" size="sm" fw={500} tt="uppercase">
                       Memory Usage
                     </Text>
                     <Text fw={700} size="xl">
@@ -157,10 +149,10 @@ const SystemMonitor = () => {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-              <Card withBorder p="md" radius="md" h={140}>
+              <Card withBorder p="lg" radius="md" h={160}>
                 <Group justify="space-between" h="100%">
                   <div style={{ flex: 1 }}>
-                    <Text c="dimmed" size="xs" fw={500} tt="uppercase">
+                    <Text c="dimmed" size="sm" fw={500} tt="uppercase">
                       Disk Usage
                     </Text>
                     {systemData.disk[0] && (
@@ -187,10 +179,10 @@ const SystemMonitor = () => {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-              <Card withBorder p="md" radius="md" h={140}>
+              <Card withBorder p="lg" radius="md" h={160}>
                 <Group justify="space-between" h="100%">
                   <div style={{ flex: 1 }}>
-                    <Text c="dimmed" size="xs" fw={500} tt="uppercase">
+                    <Text c="dimmed" size="sm" fw={500} tt="uppercase">
                       System Info
                     </Text>
                     <Text fw={700} size="lg">
@@ -315,7 +307,7 @@ const SystemMonitor = () => {
           </Stack>
         </ScrollArea>
       </Paper>
-    </Stack>
+      </Stack>
   );
 };
 

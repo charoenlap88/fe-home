@@ -1,0 +1,40 @@
+// Prisma schema for IoT project
+// Database: MySQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://charoenlap:Ch@roenlap89@localhost:3306/iot_db"
+  shadowDatabaseUrl = "mysql://charoenlap:Ch@roenlap89@localhost:3306/iot_db_shadow"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Device {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  location  String
+  state     Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logs      Log[]
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  device    Device   @relation(fields: [deviceId], references: [id])
+  deviceId  Int
+  event     String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+}

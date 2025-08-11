@@ -99,6 +99,13 @@ const Files = () => {
           >
             โฟลเดอร์ใหม่
           </Button>
+          <Button
+            variant="outline"
+            color="teal"
+            onClick={() => window.location.href = '/db-manager'}
+          >
+            ดู Database
+          </Button>
         </Group>
       </Group>
 

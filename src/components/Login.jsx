@@ -11,9 +11,11 @@ import {
   Stack
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { useAuth } from '../contexts/AuthContext';
 import { AUTH_CONFIG } from '../config';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,7 +29,14 @@ const Login = ({ onLogin }) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     if (username === AUTH_CONFIG.username && password === AUTH_CONFIG.password) {
-      onLogin(true);
+      // Create user data for session
+      const userData = {
+        username: username,
+        loginTime: new Date().toISOString(),
+        lastActivity: new Date().toISOString()
+      };
+      
+      login(userData);
       setError('');
     } else {
       setError('Invalid username or password');

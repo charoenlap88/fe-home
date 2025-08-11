@@ -1,9 +1,12 @@
 const express = require('express');
+const mysql = require('mysql2/promise');
+const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 const si = require('systeminformation');
 const { exec } = require('child_process');
 const util = require('util');
 
+const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -249,6 +252,154 @@ app.get('/api/system/all', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Database Manager Endpoints
+const dbConfig = {
+  host: 'localhost',
+  user: 'charoenlap',
+  password: 'Ch@roenlap89',
+};
+
+// Get all databases
+app.get('/api/db/databases', async (req, res) => {
+  try {
+    const conn = await mysql.createConnection(dbConfig);
+    const [rows] = await conn.query('SHOW DATABASES');
+    await conn.end();
+    res.json(rows.map(r => r.Database));
+  } catch (e) {
+    console.error('Database connection error:', e.message);
+    res.status(500).json({ 
+      error: 'Database connection failed', 
+      details: e.message,
+      config: { host: dbConfig.host, user: dbConfig.user }
+    });
+  }
+});
+
+// Get all tables in a database
+app.get('/api/db/tables', async (req, res) => {
+  const { db } = req.query;
+  try {
+    const conn = await mysql.createConnection({ ...dbConfig, database: db });
+    const [rows] = await conn.query('SHOW TABLES');
+    await conn.end();
+    const tables = rows.map(r => Object.values(r)[0]);
+    res.json(tables);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get table data
+app.get('/api/db/table-data', async (req, res) => {
+  const { db, table } = req.query;
+  try {
+    const conn = await mysql.createConnection({ ...dbConfig, database: db });
+    const [rows] = await conn.query(`SELECT * FROM \`${table}\``);
+    const [columns] = await conn.query(`SHOW COLUMNS FROM \`${table}\``);
+    await conn.end();
+    res.json({ rows, columns: columns.map(c => c.Field) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Edit table row (by id)
+app.put('/api/db/table-data', async (req, res) => {
+  const { db, table } = req.query;
+  const { data } = req.body;
+  try {
+    const conn = await mysql.createConnection({ ...dbConfig, database: db });
+    const id = data.id;
+    const updates = Object.entries(data)
+      .filter(([k]) => k !== 'id')
+      .map(([k, v]) => `\`${k}\`='${v}'`).join(', ');
+    await conn.query(`UPDATE \`${table}\` SET ${updates} WHERE id=${id}`);
+    await conn.end();
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Delete table row (by id)
+app.delete('/api/db/table-data', async (req, res) => {
+  const { db, table } = req.query;
+  const { id } = req.body;
+  try {
+    const conn = await mysql.createConnection({ ...dbConfig, database: db });
+    await conn.query(`DELETE FROM \`${table}\` WHERE id=${id}`);
+    await conn.end();
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// IoT API Endpoints using Prisma
+// Get all users
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (e) {
+    console.error('Error fetching users:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get all devices
+app.get('/api/devices', async (req, res) => {
+  try {
+    const devices = await prisma.device.findMany({
+      include: {
+        logs: {
+          take: 5,
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
+    res.json(devices);
+  } catch (e) {
+    console.error('Error fetching devices:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Update device state
+app.put('/api/devices/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { state } = req.body;
+    
+    const device = await prisma.device.update({
+      where: { id: parseInt(id) },
+      data: { state: Boolean(state) }
+    });
+    
+    res.json(device);
+  } catch (e) {
+    console.error('Error updating device:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get device logs
+app.get('/api/devices/:id/logs', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const logs = await prisma.log.findMany({
+      where: { deviceId: parseInt(id) },
+      orderBy: { createdAt: 'desc' },
+      take: 50
+    });
+    res.json(logs);
+  } catch (e) {
+    console.error('Error fetching logs:', e.message);
+    res.status(500).json({ error: e.message });
   }
 });
 
