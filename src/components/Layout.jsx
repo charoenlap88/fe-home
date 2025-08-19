@@ -20,7 +20,8 @@ import {
   IconUser,
   IconChevronDown,
   IconChartBar,
-  IconDatabase
+  IconDatabase,
+  IconCamera
 } from '@tabler/icons-react';
 
 const Layout = ({ children }) => {
@@ -32,7 +33,8 @@ const Layout = ({ children }) => {
     { path: '/dashboard', icon: IconDashboard, label: 'Dashboard' },
     { path: '/files', icon: IconFileText, label: 'File' },
     { path: '/system', icon: IconChartBar, label: 'System Monitor' },
-    { path: '/db-manager', icon: IconDatabase, label: 'Database' }
+    { path: '/db-manager', icon: IconDatabase, label: 'Database' },
+    { path: '/camera', icon: IconCamera, label: 'Camera' }
   ];
 
   return (

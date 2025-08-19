@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard'
 import DatabaseManager from './pages/DatabaseManager'
 import Files from './pages/Files'
 import SystemMonitor from './pages/SystemMonitor'
+import Camera from './pages/Camera'
 import './App.css'
 
 function AppContent() {
@@ -34,6 +35,7 @@ function AppContent() {
           <Route path="/system" element={<SystemMonitor />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/db-manager" element={<PageWrapper><DatabaseManager /></PageWrapper>} />
+          <Route path="/camera" element={<Camera />} />
         </Routes>
       </Layout>
     </Router>

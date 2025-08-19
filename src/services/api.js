@@ -3,11 +3,24 @@ const API_BASE_URL = 'http://localhost:3001/api';
 // Generic API call function
 const apiCall = async (endpoint) => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+    const data = await response.json();
+    console.log(`API call success for ${endpoint}:`, data);
+    return data;
   } catch (error) {
     console.error(`API call failed for ${endpoint}:`, error);
     throw error;
